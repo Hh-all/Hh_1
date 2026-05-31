@@ -1,0 +1,20 @@
+# ============================================================
+# 智能搜索代理系统 - 依赖清单
+# Agentic RAG System with Doubao + Multi-Backend Search
+# ============================================================
+
+# LLM API (Doubao via Volcengine Ark - OpenAI compatible)
+openai>=1.0.0
+
+# Vector Database
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+
+# Full-text Keyword Search
+whoosh>=2.7.4
+
+# Utilities
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+jieba>=0.42.1          # Chinese text segmentation
+rich>=13.0.0            # Beautiful CLI output
