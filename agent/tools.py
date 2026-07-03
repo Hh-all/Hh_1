@@ -237,43 +237,43 @@ class ToolRegistry:
         self._handlers[name] = handler
 
     # ================================================================
-    # 工具处理函数（延迟初始化后端实例）
+    # 工具处理函数（模块级单例，所有 SearchAgent 共享后端实例）
     # ================================================================
+
+    # 模块级缓存 —— 所有 ToolRegistry 实例共享同一组后端连接
+    _backend_cache: Dict[str, Any] = {}
+
+    @staticmethod
+    def _get_backend(key: str, factory: callable):
+        """从缓存获取或创建后端实例（线程安全）"""
+        if key not in ToolRegistry._backend_cache:
+            ToolRegistry._backend_cache[key] = factory()
+        return ToolRegistry._backend_cache[key]
 
     @property
     def _db(self):
-        if not hasattr(self, '_db_instance'):
-            from backends.database import LocalDatabase
-            self._db_instance = LocalDatabase()
-        return self._db_instance
+        from backends.database import LocalDatabase
+        return ToolRegistry._get_backend("db", LocalDatabase)
 
     @property
     def _vector(self):
-        if not hasattr(self, '_vector_instance'):
-            from backends.vector_db import VectorDatabase
-            self._vector_instance = VectorDatabase()
-        return self._vector_instance
+        from backends.vector_db import VectorDatabase
+        return ToolRegistry._get_backend("vector", VectorDatabase)
 
     @property
     def _keyword(self):
-        if not hasattr(self, '_keyword_instance'):
-            from backends.keyword_search import KeywordSearchEngine
-            self._keyword_instance = KeywordSearchEngine()
-        return self._keyword_instance
+        from backends.keyword_search import KeywordSearchEngine
+        return ToolRegistry._get_backend("keyword", KeywordSearchEngine)
 
     @property
     def _code(self):
-        if not hasattr(self, '_code_instance'):
-            from backends.code_repo import CodeRepository
-            self._code_instance = CodeRepository()
-        return self._code_instance
+        from backends.code_repo import CodeRepository
+        return ToolRegistry._get_backend("code", CodeRepository)
 
     @property
     def _enterprise(self):
-        if not hasattr(self, '_enterprise_instance'):
-            from backends.enterprise_sdk import EnterpriseSDK
-            self._enterprise_instance = EnterpriseSDK()
-        return self._enterprise_instance
+        from backends.enterprise_sdk import EnterpriseSDK
+        return ToolRegistry._get_backend("enterprise", EnterpriseSDK)
 
     def _search_db(self, query: str) -> str:
         return self._db.search(query)

@@ -1,7 +1,7 @@
 """
 ============================================================
 Web 服务 - 将搜索代理部署为内网 HTTP 服务
-Web Server for LAN Deployment (Flask + SSE)
+Web Server for LAN Deployment (Flask + Waitress + SSE)
 ============================================================
 
 启动后局域网内其他设备可通过浏览器访问：
@@ -10,6 +10,7 @@ Web Server for LAN Deployment (Flask + SSE)
 API Key 仅存储在服务端 .env 中，不会暴露给客户端。
 """
 import json
+import os
 import queue
 import sys
 import threading
@@ -29,6 +30,16 @@ from agent.core import SearchAgent
 WEB_UI_DIR = str(PROJECT_ROOT / "web_ui")
 
 app = Flask(__name__, static_folder=WEB_UI_DIR, static_url_path="")
+
+# ---- 并发控制 ----
+# Doubao API 最大并发调用数，防止多人同时搜索时触发 API 限流
+_DOUBAO_SEMAPHORE = threading.BoundedSemaphore(
+    int(os.getenv("MAX_CONCURRENT_DOUBAO", "5"))
+)
+
+# 当前活跃搜索计数
+_active_searches = 0
+_active_searches_lock = threading.Lock()
 
 
 # ================================================================
@@ -59,6 +70,18 @@ def _run_search(user_query: str, event_queue: queue.Queue):
         user_query: 用户问题
         event_queue: 线程安全的事件队列
     """
+    # 获取 API 并发许可
+    acquired = _DOUBAO_SEMAPHORE.acquire(timeout=60)
+    if not acquired:
+        event_queue.put({"type": EventType.ERROR, "data": {"text": "系统繁忙，请稍后重试（API 并发已达上限）"}})
+        event_queue.put({"type": EventType.DONE, "data": {"stats": ""}})
+        return
+
+    # 更新活跃计数
+    global _active_searches
+    with _active_searches_lock:
+        _active_searches += 1
+
     try:
         agent = SearchAgent()
 
@@ -116,6 +139,11 @@ def _run_search(user_query: str, event_queue: queue.Queue):
         log.error(f"[WebServer] 搜索线程异常: {e}")
         event_queue.put({"type": EventType.ERROR, "data": {"text": str(e)}})
         event_queue.put({"type": EventType.DONE, "data": {"stats": ""}})
+
+    finally:
+        with _active_searches_lock:
+            _active_searches -= 1
+        _DOUBAO_SEMAPHORE.release()
 
 
 # ================================================================
@@ -181,11 +209,13 @@ def api_chat():
 
 @app.route("/api/health", methods=["GET"])
 def api_health():
-    """健康检查接口"""
+    """健康检查接口（含并发状态）"""
     return jsonify({
         "status": "ok",
         "model": DOUBAO_MODEL,
         "api_configured": DOUBAO_API_KEY != "your-api-key-here",
+        "active_searches": _active_searches,
+        "max_concurrent_api": _DOUBAO_SEMAPHORE._initial_value,
     })
 
 
@@ -197,10 +227,13 @@ def start_server(host: str = "0.0.0.0", port: int = 8080, debug: bool = False):
     """
     启动 Web 服务器。
 
+    使用 waitress 作为生产级 WSGI 服务器（Windows 兼容），
+    支持多线程并发处理。
+
     Args:
         host: 监听地址,默认 0.0.0.0（允许局域网访问）
         port: 监听端口
-        debug: 是否开启调试模式
+        debug: 是否使用 Flask 开发模式（仅本地调试用）
     """
     import socket
 
@@ -214,14 +247,18 @@ def start_server(host: str = "0.0.0.0", port: int = 8080, debug: bool = False):
     except Exception:
         pass
 
+    max_api = _DOUBAO_SEMAPHORE._initial_value
+
     print(f"""
 ╔══════════════════════════════════════════════════════╗
 ║     企业智能搜索代理 - Web 服务                       ║
-║     Agentic Search Web Server                        ║
+║     Agentic Search Web Server (Waitress)             ║
 ╠══════════════════════════════════════════════════════╣
 ║                                                      ║
 ║  本地访问:   http://127.0.0.1:{port}                   ║
 ║  局域网访问: http://{local_ip}:{port}                 ║
+║                                                      ║
+║  API 最大并发: {max_api}                                  ║
 ║                                                      ║
 ║  按 Ctrl+C 停止服务                                   ║
 ║                                                      ║
@@ -231,7 +268,20 @@ def start_server(host: str = "0.0.0.0", port: int = 8080, debug: bool = False):
     if DOUBAO_API_KEY == "your-api-key-here":
         print("  ⚠️  警告: 未配置 DOUBAO_API_KEY，请在 .env 文件中设置！\n")
 
-    app.run(host=host, port=port, debug=debug, threaded=True)
+    if debug:
+        print("  [开发模式] 使用 Flask 内置服务器\n")
+        app.run(host=host, port=port, debug=True, threaded=True)
+    else:
+        try:
+            from waitress import serve
+            # waitress 线程池：4-16 个工作线程，足够处理内网并发
+            threads = int(os.getenv("WAITRESS_THREADS", "8"))
+            print(f"  [生产模式] Waitress WSGI 服务器，工作线程={threads}\n")
+            serve(app, host=host, port=port, threads=threads)
+        except ImportError:
+            print("  ⚠️  waitress 未安装，回退到 Flask 开发服务器")
+            print("     安装: pip install waitress\n")
+            app.run(host=host, port=port, debug=False, threaded=True)
 
 
 if __name__ == "__main__":

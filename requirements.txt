@@ -15,6 +15,7 @@ whoosh>=2.7.4
 
 # Web Server
 flask>=3.0.0
+waitress>=3.0.0          # Windows 兼容的生产级 WSGI 服务器
 
 # Utilities
 pydantic>=2.0.0
