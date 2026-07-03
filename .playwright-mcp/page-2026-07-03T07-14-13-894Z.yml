@@ -1,0 +1,41 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]: S
+      - heading "企业智能搜索代理" [level=1] [ref=e5]
+    - generic [ref=e6]: v1.0
+    - button "清空" [ref=e8] [cursor=pointer]
+    - generic [ref=e11]: 就绪
+  - generic [ref=e14]:
+    - heading "欢迎使用企业智能搜索代理" [level=2] [ref=e15]
+    - paragraph [ref=e16]: 基于 Doubao 大模型的多源智能搜索 -- 一站式获取企业信息
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]: DB
+        - generic [ref=e20]: 本地数据库
+        - generic [ref=e21]: 员工、项目、销售等结构化数据
+      - generic [ref=e22]:
+        - generic [ref=e23]: VEC
+        - generic [ref=e24]: 向量语义搜索
+        - generic [ref=e25]: 文档和知识的语义匹配检索
+      - generic [ref=e26]:
+        - generic [ref=e27]: KW
+        - generic [ref=e28]: 关键词搜索
+        - generic [ref=e29]: 全文关键词精确检索
+      - generic [ref=e30]:
+        - generic [ref=e31]: REPO
+        - generic [ref=e32]: 代码仓库
+        - generic [ref=e33]: 源代码和配置文件搜索
+      - generic [ref=e34]:
+        - generic [ref=e35]: ENT
+        - generic [ref=e36]: 企业系统
+        - generic [ref=e37]: HR、CRM、ERP、知识库
+    - generic [ref=e38]:
+      - button "公司有多少员工？" [ref=e39] [cursor=pointer]
+      - button "最近的销售趋势如何？" [ref=e40] [cursor=pointer]
+      - button "项目管理有哪些功能？" [ref=e41] [cursor=pointer]
+  - generic [ref=e42]:
+    - generic [ref=e43]:
+      - textbox "输入问题，AI 将自主决策搜索策略..." [ref=e44]
+      - button "发送" [ref=e45] [cursor=pointer]
+    - generic [ref=e47]: Enter 发送 | Shift+Enter 换行

@@ -109,10 +109,10 @@ class DoubaoLLM:
                         }
                     }
                     result["tool_calls"].append(tool_call)
-                    log.info(f"[Doubao LLM] 🔧 决定调用工具: {tc.function.name}")
+                    log.info(f"[Doubao LLM] [工具调用] 决定调用工具: {tc.function.name}")
 
             log.info(
-                f"[Doubao LLM] ✅ 响应完成 | "
+                f"[Doubao LLM] [完成] 响应完成 | "
                 f"耗时={elapsed:.2f}s | "
                 f"tokens={result['usage']['total_tokens']} | "
                 f"finish={result['finish_reason']} | "
@@ -120,12 +120,12 @@ class DoubaoLLM:
             )
 
             if result["content"]:
-                log.debug(f"[Doubao LLM] 💭 思考: {result['content'][:200]}...")
+                log.debug(f"[Doubao LLM] [思考] 思考: {result['content'][:200]}...")
 
             return result
 
         except Exception as e:
-            log.error(f"[Doubao LLM] ❌ API 调用失败: {e}")
+            log.error(f"[Doubao LLM] [错误] API 调用失败: {e}")
             # 返回模拟的错误响应
             return {
                 "role": "assistant",
@@ -147,7 +147,7 @@ class DoubaoLLM:
         Returns:
             最终答案文本
         """
-        log.info("[Doubao LLM] 📝 强制生成最终答案...")
+        log.info("[Doubao LLM] [生成] 强制生成最终答案...")
 
         # 追加最终指令
         final_messages = messages + [{

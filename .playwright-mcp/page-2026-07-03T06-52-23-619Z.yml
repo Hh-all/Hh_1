@@ -1,0 +1,42 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]: S
+      - heading "企业智能搜索代理" [level=1] [ref=e5]
+    - generic [ref=e6]: v1.0
+    - button "清空" [ref=e8] [cursor=pointer]
+    - generic [ref=e11]: 第 2/10 轮搜索
+  - generic [ref=e13]:
+    - generic [ref=e49]:
+      - generic [ref=e50]:
+        - generic [ref=e51]: 你
+        - generic [ref=e52]: 14:50:52
+        - button "复制" [ref=e53] [cursor=pointer]
+      - generic [ref=e54]: 公司有多少员工？
+    - generic [ref=e55]:
+      - generic [ref=e56]: 第 1 步
+      - generic [ref=e58] [cursor=pointer]:
+        - generic [ref=e59]:
+          - generic [ref=e60]: 工具调用
+          - generic [ref=e61]: 14:51:08
+          - button "复制" [ref=e62]
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - strong [ref=e65]: "[本地数据库]"
+            - text: "查询:"
+            - emphasis [ref=e66]: SELECT COUNT(*) FROM employees
+          - generic [ref=e69]: COUNT(*) -------- 12
+        - generic [ref=e70]:
+          - generic [ref=e71]: ▼
+          - text: 展开详情
+    - generic [ref=e73]:
+      - generic [ref=e74]:
+        - generic [ref=e75]: 回答
+        - generic [ref=e76]: 14:51:15
+        - button "复制" [ref=e77] [cursor=pointer]
+      - generic [ref=e78]:
+        - paragraph [ref=e79]: 根据本地数据库查询结果，公司目前共有12名员工。
+        - paragraph [ref=e80]: 信息来源：本地关系数据库（employees表统计）
+  - generic [ref=e42]:
+    - textbox "输入问题，AI 将自主决策搜索策略..." [disabled] [ref=e44]
+    - generic [ref=e47]: Enter 发送 | Shift+Enter 换行

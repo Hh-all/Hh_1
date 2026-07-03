@@ -167,18 +167,15 @@ agentic_search/
 │   ├── keyword_search.py       # Whoosh 关键词搜索
 │   ├── code_repo.py            # 代码仓库搜索
 │   └── enterprise_sdk.py       # 企业系统SDK模拟
+├── web_ui/                     # Web 聊天界面
+│   └── index.html              # 现代化聊天网页
+├── web_server.py               # Flask Web 服务
 ├── data/                       # 数据目录（自动生成）
-│   ├── local.db                # SQLite 数据库文件
-│   ├── documents/              # 示例文档
-│   ├── code_samples/           # 示例代码
-│   ├── vector_db/              # 向量数据库持久化
-│   └── keyword_index/          # 关键词索引
 ├── logs/                       # 日志目录
-│   └── agent.log               # 结构化日志
 ├── config.py                   # 系统配置
 ├── logger_setup.py             # 日志系统
 ├── seed_data.py                # 数据初始化
-├── main.py                     # CLI入口
+├── main.py                     # CLI入口（含 --web 启动Web服务）
 ├── requirements.txt            # 依赖清单
 └── .env.example                # 环境变量模板
 ```
@@ -226,6 +223,3 @@ Doubao 模型会根据问题类型自动选择合适的搜索策略：
 | `TOP_K_VECTOR` | `5` | 向量搜索返回数 |
 | `LOG_LEVEL` | `INFO` | 日志级别 |
 
-## 📝 License
-
-MIT

@@ -156,7 +156,7 @@ class SearchAgent:
         self.iteration_count = 0
 
         log.info("=" * 60)
-        log.info(f"[搜索代理] 🚀 开始处理用户问题: {user_query}")
+        log.info(f"[搜索代理] [开始] 开始处理用户问题: {user_query}")
         log.info("=" * 60)
 
         # 初始化对话
@@ -169,7 +169,7 @@ class SearchAgent:
         for iteration in range(MAX_SEARCH_ITERATIONS):
             self.iteration_count = iteration + 1
             log.info(f"\n{'─' * 40}")
-            log.info(f"[搜索代理] 🔄 第 {self.iteration_count}/{MAX_SEARCH_ITERATIONS} 轮推理")
+            log.info(f"[搜索代理] [推理] 第 {self.iteration_count}/{MAX_SEARCH_ITERATIONS} 轮推理")
             log.info(f"{'─' * 40}")
 
             # 调用 LLM 进行推理
@@ -186,7 +186,7 @@ class SearchAgent:
 
             else:
                 # LLM 决定给出最终答案
-                log.info(f"[搜索代理] 🎯 LLM 认为信息充足，生成最终答案（共 {self.iteration_count} 轮）")
+                log.info(f"[搜索代理] [答案] LLM 认为信息充足，生成最终答案（共 {self.iteration_count} 轮）")
                 answer = response.get("content", "")
 
                 if not answer or len(answer) < 20:
@@ -195,11 +195,11 @@ class SearchAgent:
                     answer = self.llm.force_final_answer(self.messages)
 
                 elapsed = time.time() - self.start_time
-                log.info(f"[搜索代理] ✅ 搜索完成 | 总耗时={elapsed:.1f}s | 总轮次={self.iteration_count}")
+                log.info(f"[搜索代理] [完成] 搜索完成 | 总耗时={elapsed:.1f}s | 总轮次={self.iteration_count}")
 
                 # 记录搜索摘要
                 search_summary = self.tools.get_call_summary()
-                log.info(f"[搜索代理] 📊 {search_summary}")
+                log.info(f"[搜索代理] [统计] {search_summary}")
 
                 return answer
 

@@ -33,7 +33,7 @@ from logger_setup import log
 def seed_database():
     """创建数据库表并插入示例数据"""
     log.info("=" * 50)
-    log.info("📦 初始化 SQLite 数据库...")
+    log.info("[初始化] 初始化 SQLite 数据库...")
     log.info("=" * 50)
 
     conn = sqlite3.connect(str(DB_PATH))
@@ -314,7 +314,7 @@ SAMPLE_DOCUMENTS = [
 def seed_documents():
     """创建示例文档文件"""
     log.info("=" * 50)
-    log.info("📄 创建示例文档...")
+    log.info("[初始化] 创建示例文档...")
     log.info("=" * 50)
 
     DOCUMENTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -510,7 +510,7 @@ spec:
 def seed_code_samples():
     """创建示例代码文件"""
     log.info("=" * 50)
-    log.info("💻 创建示例代码文件...")
+    log.info("[初始化] 创建示例代码文件...")
     log.info("=" * 50)
 
     CODE_SAMPLES_DIR.mkdir(parents=True, exist_ok=True)
@@ -529,7 +529,7 @@ def seed_code_samples():
 def seed_vector_db():
     """将文档添加到向量数据库"""
     log.info("=" * 50)
-    log.info("🧠 初始化向量数据库...")
+    log.info("[初始化] 初始化向量数据库...")
     log.info("=" * 50)
 
     from backends.vector_db import VectorDatabase
@@ -550,7 +550,7 @@ def seed_vector_db():
 def seed_keyword_index():
     """将文档添加到关键词搜索索引"""
     log.info("=" * 50)
-    log.info("🔍 初始化关键词搜索索引...")
+    log.info("[初始化] 初始化关键词搜索索引...")
     log.info("=" * 50)
 
     from backends.keyword_search import KeywordSearchEngine
@@ -569,7 +569,7 @@ def seed_keyword_index():
 def main():
     """运行所有数据初始化"""
     log.info("=" * 60)
-    log.info("🚀 开始初始化所有数据源...")
+    log.info("[初始化] 开始初始化所有数据源...")
     log.info("=" * 60)
 
     try:
